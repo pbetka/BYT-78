@@ -40,6 +40,7 @@ public class BankTest {
 
 	@Test
 	public void testDeposit() throws AccountDoesNotExistException {
+		//test depositing multiple times in single account
 		DanskeBank.deposit("Gertrud", new Money(10000, DKK)); //Error NullPointerException when depositing in existing account
 		DanskeBank.deposit("Gertrud", new Money(20000, DKK));
 		assertEquals("test deposit addition", Integer.valueOf(30000), DanskeBank.getBalance("Gertrud"));
@@ -47,6 +48,7 @@ public class BankTest {
 
 	@Test
 	public void testWithdraw() throws AccountDoesNotExistException {
+		//test deposit then withdraw
 		Nordea.deposit("Bob", new Money(10000, SEK));
 		Nordea.withdraw("Bob", new Money(5000, SEK));
 		assertEquals("test withdraw", Integer.valueOf(5000), Nordea.getBalance("Bob")); //Error Expected: 5000, Actual: 15000
@@ -61,10 +63,12 @@ public class BankTest {
 	
 	@Test
 	public void testTransfer() throws AccountDoesNotExistException {
+		//test deposit then transfer
 		Nordea.deposit("Bob", new Money(10000, SEK));
 		Nordea.transfer("Bob", SweBank,  "Ulrika", new Money(10000, SEK));
 		assertEquals("test transfer sender account balance", Integer.valueOf(0), Nordea.getBalance("Bob"));  //Error Expected: 0, Actual: 10000
 		assertEquals("test transfer receiver account balance", Integer.valueOf(10000), SweBank.getBalance("Ulrika"));
+		//test transfer when not enough money
 		SweBank.transfer("Ulrika", "Bob", new Money(15000, SEK));
 		assertEquals("test transfer sender account balance", Integer.valueOf(10000), SweBank.getBalance("Ulrika"));  //Error Expected: 10000, Actual: 25000
 		assertEquals("test transfer receiver account balance", Integer.valueOf(0), SweBank.getBalance("Bob"));
@@ -72,15 +76,20 @@ public class BankTest {
 	
 	@Test
 	public void testTimedPayment() throws AccountDoesNotExistException {
+		//test timed payment
 		SweBank.addTimedPayment("Bob", "1", 8, 10, new Money(200, SEK), SweBank, "Ulrika");
 		assertTrue("test add timed payment", SweBank.getAccountList().get("Bob").timedPaymentExists("1"));
+		//test remove timed payment
 		SweBank.removeTimedPayment("Bob", "1");
 		assertFalse("test remove timed payment", SweBank.getAccountList().get("Bob").timedPaymentExists("1"));
 		SweBank.deposit("Ulrika", new Money(1000, SEK));
+		//test add once more
 		SweBank.addTimedPayment("Ulrika", "2", 0, 1, new Money(100, SEK), SweBank, "Bob");
+		//tick 3 times to simulate time
 		SweBank.tick();
 		SweBank.tick();
 		SweBank.tick();
+		//test balance after time for both sender and receiver
 		assertEquals("Test: check balance after timedPayment", Integer.valueOf(800), SweBank.getBalance("Ulrika")); //Error Expected: 800, Actual: 500
 		assertEquals("Test: check balance after timedPayment", Integer.valueOf(200), SweBank.getBalance("Bob"));
 	}

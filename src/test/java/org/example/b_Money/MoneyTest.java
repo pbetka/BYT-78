@@ -36,6 +36,7 @@ public class MoneyTest {
 
 	@Test
 	public void testToString() {
+		//test to string converting saved integer to fraction with 2 places after point and currency sign after space
 		assertEquals("test toString zero", "0 EUR", EUR0.toString());
 		assertEquals("test toString", "10 EUR", EUR10.toString());
 		assertEquals("test toString negative", "-100 SEK", SEKn100.toString());
@@ -43,6 +44,7 @@ public class MoneyTest {
 
 	@Test
 	public void testUniversalValue() {
+		//test universal value for given currency and amount of it
 		assertEquals("test Universal Value SEK", Integer.valueOf(1500), SEK100.universalValue());
 		assertEquals("test Universal Value EUR", Integer.valueOf(3000), EUR20.universalValue());
 		assertEquals("test Universal Value SEK negative", Integer.valueOf(-1500), SEKn100.universalValue());
@@ -50,18 +52,21 @@ public class MoneyTest {
 
 	@Test
 	public void testEqualsMoney() {
+		//test checking if equal with different currencies
 		assertEquals("test equals true", true, EUR10.equals(SEK100));
 		assertEquals("test equals false", false, EUR20.equals(SEK100));
 	}
 
 	@Test
 	public void testAdd() {
+		//test addition with different currencies
 		assertEquals("test add SEK100 + SEKn100", "0 SEK", SEK100.add(SEKn100).toString());
 		assertEquals("test add SEK100 + EUR10", "200 SEK", SEK100.add(EUR10).toString());
 	}
 
 	@Test
 	public void testSub() {
+		//test substitution with different currencies
 		assertEquals("test sub negative", "-100 SEK", SEK100.sub(SEK200).toString());
 		assertEquals("test sub zero", "0 SEK", SEK100.sub(EUR10).toString());
 	}
@@ -75,11 +80,13 @@ public class MoneyTest {
 	@Test
 	public void testNegate() {
 		assertEquals("test negate", "-100 SEK", SEK100.negate().toString());
+		//test negating negative value
 		assertEquals("test negate negative", "100 SEK", SEKn100.negate().toString());
 	}
 
 	@Test
 	public void testCompareTo() {
+		//test comparison with different currencies
 		assertEquals("test compare equal", 0, SEK100.compareTo(SEK100));
 		assertEquals("test compare less", -1, SEK100.compareTo(EUR20));
 		assertEquals("test compare more", +1, SEK200.compareTo(SEKn100));
